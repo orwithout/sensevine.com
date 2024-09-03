@@ -1,0 +1,51 @@
+<!-- index\test.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>PWA 应用数据验证</title>
+    <script type="module">
+        import documentValidator from './schema.js';
+
+        window.onload = function () {
+            const tagsInput = document.getElementById('tags');
+            
+            const descriptionInput = document.getElementById('description');
+            const validateButton = document.getElementById('validateButton');
+            const validateFieldButton = document.getElementById('validateFieldButton');
+            const resultDiv = document.getElementById('result');
+
+            validateButton.addEventListener('click', () => {
+                const data = {
+                    tags: tagsInput.value,
+                    description: descriptionInput.value
+                };
+                console.log(data);
+                const validationResult = documentValidator.validateData(data);
+                resultDiv.textContent = '验证结果：' + JSON.stringify(validationResult, null, 2);
+            });
+
+            validateFieldButton.addEventListener('click', () => {
+                const fieldName = 'tags'; // 可以更改为 'description' 来验证另一个字段
+                const fieldValue = tagsInput.value;
+                const fieldResult = documentValidator.validateField(fieldName, fieldValue);
+                resultDiv.textContent = '字段验证结果：' + JSON.stringify(fieldResult, null, 2);
+            });
+        };
+    </script>
+</head>
+<body>
+    <h1>数据验证测试</h1>
+    <div>
+        <label for="tags">标签（tags，用逗号分隔）：</label>
+        <input type="text" id="tags" placeholder="输入标签，例如：科技, 生活">
+    </div>
+    <div>
+        <label for="description">描述（description）：</label>
+        <input type="text" id="description" placeholder="输入描述">
+    </div>
+    <button id="validateButton">验证完整数据</button>
+    <button id="validateFieldButton">验证单个字段（标签）</button>
+    <div id="result"></div>
+</body>
+</html>

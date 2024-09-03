@@ -1,0 +1,43 @@
+
+
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>授权回调页面</title>
+</head>
+<body>
+    <h1>授权信息</h1>
+    <!-- <button id="loginButton">登录百度网盘</button> -->
+    <a href="http://openapi.baidu.com/oauth/2.0/authorize?response_type=token&client_id=gaT3iSd39QTjifmPLXIUIxpWdWRxWPEr&redirect_uri=http://suoyiai.com:8080/baidu/token.html&scope=basic,netdisk"  rel="noopener noreferrer" id="loginLink">登录百度网盘</a>
+    <div id="queryParams"></div>
+    <script>
+        // document.getElementById('loginButton').addEventListener('click', function() {
+        //     // 替换为您的百度网盘授权登录URL
+        //     var authUrl = 'http://openapi.baidu.com/oauth/2.0/authorize?response_type=token&client_id=gaT3iSd39QTjifmPLXIUIxpWdWRxWPEr&redirect_uri=http://suoyiai.com:8080/baidu/token.html&scope=basic,netdisk';
+        //     window.location.href = authUrl;
+        // });
+
+        function getQueryParams() {
+            var params = {};
+            var queryString = window.location.hash.substring(1); // 使用 hash 而不是 search
+            var vars = queryString.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if(pair[0]) params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+            }
+            return params;
+        }
+
+        function displayQueryParams() {
+            var params = getQueryParams();
+            var displayElement = document.getElementById('queryParams');
+            displayElement.innerHTML = '<pre>' + JSON.stringify(params, null, 2) + '</pre>';
+        }
+
+        // 一旦页面加载，立即显示查询参数
+        displayQueryParams();
+    </script>
+</body>
+</html>

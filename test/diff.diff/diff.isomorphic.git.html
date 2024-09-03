@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Merge Demo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/diff2html/3.1.15/diff2html.min.css">
+  <style>
+    .diff-container {
+      margin: 20px;
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Git Merge Demo</h1>
+  <div id="diff-container" class="diff-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/isomorphic-git@1.11.6/dist/bundle.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/browserfs@1.4.3/dist/browserfs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/diff/5.0.0/diff.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/3.1.15/diff2html.min.js"></script>
+  <script>
+    async function run() {
+      BrowserFS.configure({ fs: "IndexedDB", options: {} }, async function(err) {
+        if (err) return console.log(err);
+
+        const fs = BrowserFS.BFSRequire('fs');
+        const pfs = require('isomorphic-git/internal-apis/pfs');
+        const http = require('isomorphic-git/http/web');
+        const git = window.git;
+        
+        git.plugins.set('fs', pfs(fs));
+
+        const dir = '/repo';
+        const url = 'https://github.com/isomorphic-git/isomorphic-git';
+        
+        await git.clone({ fs, http, dir, url, singleBranch: true, depth: 1 });
+
+        const oldCommit = 'HEAD';
+        const newBranch = 'new-branch';
+
+        await git.branch({ fs, dir, ref: newBranch });
+        await git.checkout({ fs, dir, ref: newBranch });
+
+        const filePath = 'README.md';
+        fs.writeFileSync(`${dir}/${filePath}`, 'Hello new world\nThis is a test.');
+
+        await git.add({ fs, dir, filepath: filePath });
+        await git.commit({
+          fs, dir, message: 'Update README.md',
+          author: { name: 'Author', email: 'author@example.com' }
+        });
+
+        await git.checkout({ fs, dir, ref: 'main' });
+
+        const mergeResult = await git.merge({
+          fs, dir, ours: 'main', theirs: newBranch,
+          author: { name: 'Author', email: 'author@example.com' }
+        });
+
+        const oldContent = await git.readBlob({ fs, dir, oid: oldCommit, filepath: filePath });
+        const newContent = await git.readBlob({ fs, dir, oid: mergeResult.oid, filepath: filePath });
+
+        const oldText = new TextDecoder('utf-8').decode(oldContent.blob);
+        const newText = new TextDecoder('utf-8').decode(newContent.blob);
+
+        const diffResult = Diff.createTwoFilesPatch('Old Text', 'New Text', oldText, newText);
+        const diffHtml = Diff2Html.getPrettyHtml(diffResult, { inputFormat: 'diff', showFiles: true, matching: 'lines' });
+
+        document.getElementById('diff-container').innerHTML = diffHtml;
+      });
+    }
+
+    run();
+  </script>
+</body>
+</html>

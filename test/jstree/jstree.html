@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>时间智造内网资源导航</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css" />
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .notice {
+        color: #777777;
+        font-size: 0.9em;
+        margin-top: 30px;
+        border-top: 1px solid;
+        padding-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<h1>时间智造内网资源导航</h1>
+
+<div style="display: flex;">
+    <div id="jstreeContainer" style="width: 20%;"></div>
+	<iframe id="contentFrame" style="width: 60%; height: 100vh; border: none;"></iframe>
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"></script>
+
+<script>
+$(document).ready(function() {
+
+
+
+    var dataForJsTree = [
+        {
+            "text": "SVN仓库",
+            "children": [
+                {  "type": "file", "text": "前端 - inz.cc/svn/client", "a_attr": { "href": "http://10.1.1.10/svn/zclient", "target": "_blank" } },
+                {  "type": "file", "text": "后端 - inz.cc/svn/server", "a_attr": { "href": "http://10.1.1.10/svn/zserver", "target": "_blank" } },
+                {   "type": "file","text": "美术 - inz.cc/svn/art", "a_attr": { "href": "http://10.1.1.10/svn/zart", "target": "_blank" } },
+                { "text": "策划 - inz.cc/svn/plan", "a_attr": { "href": "http://10.1.1.10/svn/zplan", "target": "_blank" } }
+            ]
+        },
+        {
+            "text": "工具与服务",
+            "children": [
+                { "text": "禅道 - inz.cc/cd", "a_attr": { "href": "http://10.1.1.15:8080", "target": "_blank" } },
+                { "text": "Jenkins - inz.cc/jks", "a_attr": { "href": "http://10.1.1.15:8080", "target": "_blank" } },
+                { "text": "内部文件共享网盘 - inz.cc/doc", "a_attr": { "href": "https://doc.inz.cc/doc", "target": "_blank" } }
+                // 其他子项...
+            ]
+        },
+        {
+            "text": "通讯与协作",
+            "children": [
+                { "text": "公司WiFi", "a_attr": { "href": "https://chat.openai.com", "target": "_blank" } },
+                { "text": "公司企业邮箱", "a_attr": { "href": "https://www.feishu.cn/hc/zh-CN/articles/360049067884", "target": "_blank" } }
+                // 其他子项...
+            ]
+        }
+        // 更多分类...
+    ];
+
+    $('#jstreeContainer').on('loaded.jstree', function() {
+        $(this).jstree('open_all');
+    });
+
+
+    $('#jstreeContainer').on("select_node.jstree", function (e, data) {
+        var node = data.node;
+        if (!node.children.length) { // 判断是否为叶子节点
+            var href = node.a_attr.href; // 获取节点的href属性
+            if (href) {
+                $('#contentFrame').attr('src', href); // 在iframe中加载对应的HTML文档
+            }
+        }
+    });
+
+
+
+    $('#jstreeContainer').jstree({
+        'core': {
+            'data': dataForJsTree,
+            'check_callback' : true,
+            'animation': false,
+            'themes': {
+                'name': 'default',
+                'responsive': true
+            }
+        },
+        'types': {
+            'default': {
+                'icon': 'jstree-icon jstree-folder' // 默认为文件夹图标
+            },
+            'file': {
+                'icon': 'jstree-icon jstree-file' // 文件节点图标
+            }
+        },
+        'plugins': ["types", "wholerow"] // 正确地使用"types"作为插件名称
+    }).on('activate_node.jstree', function (e, data) {
+        $('#jstreeContainer').jstree(data.node.state.opened ? 'close_node' : 'open_node', data.node);
+    });
+
+});
+</script>
+
+<p class="notice"><img height="16" width="16" src="./feng.ico" /> Feng 2024年04月03日</p>
+</body>
+</html>

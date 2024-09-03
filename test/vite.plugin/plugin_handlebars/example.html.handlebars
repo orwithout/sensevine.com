@@ -1,0 +1,15 @@
+<!-- vite\plugin_handlebars\example.html.handlebars -->
+<html>
+<head>
+  <title>{{title}}</title>
+</head>
+<body>
+  <h1>{{title}}</h1>
+  <p>{{getMessage}}</p>
+  <ul>
+    {{#each items}}
+    <li>{{name}} - {{formatPrice price ../discount}}</li>
+    {{/each}}
+  </ul>
+</body>
+</html>

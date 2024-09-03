@@ -1,0 +1,163 @@
+<!-- src\apis\rxdb\collection_full.test.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RxDB Test Template</title>
+</head>
+<body>
+  <h1>RxDB Test Template</h1>
+  <label>①</label> <button id="validateData">Validate Data</button> <button id="addData">Add Sample Data</button><br><br>
+  <label>②</label> <input type="text" id="searchQuery" placeholder="Search text, example: Learn"> <button id="searchData">Search Content Field</button> <br><br>
+  <label>③</label> <input type="text" id="fieldName" placeholder="Field Name"> <input type="text" id="fieldValue" placeholder="Field Value"> <button id="validateField">Validate Field</button> <br><br>
+  <div id="results"></div>
+
+  <script type="module">
+    import { getCollection, validateFull, validateField } from './collection_full.js';
+
+    const fullStore = await getCollection();
+
+    function displayResults(results) {
+      console.log('Displaying results:', results);
+      const resultDiv = document.getElementById('results');
+      resultDiv.innerHTML = '';
+      if (results.length === 0) {
+        resultDiv.innerHTML = '<p>No results found.</p>';
+        return;
+      }
+      results.forEach(result => {
+        const p = document.createElement('p');
+        p.textContent = `id: ${result.id}, parent: ${result.parent},doc.id: ${result.doc.id}, Name: ${result.doc.name}, Content: ${result.doc.content.substring(0, 50)}...`;
+        resultDiv.appendChild(p);
+      });
+    };
+
+    // Helper function to generate UUIDs
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c == 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    };
+
+  function genRanStr(length) {
+      const base64Chars = 'ABC';
+      let randomString = '';
+      for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * base64Chars.length);
+          randomString += base64Chars[randomIndex];
+      }
+      return randomString;
+  }
+    // Function to generate sample data
+    function generateSampleData() {
+      return {
+        id: `${genRanStr(2)}`,
+        parent: `${genRanStr(2)}`,
+        doc: {
+          id: uuidv4(),
+          type: 'text/plain',
+          cid: 'bafybeigdyrzt5sfp7udm7hu76uh7y26nf4dfuylqabf3oclgtqy55fbzdi',
+          name: 'Example Document',
+          actor: 'did:example:123456789abcdefghi',
+          profile: 'https://example.com/profile',
+          published: new Date().toISOString(),
+          updated: new Date().toISOString(),
+          accessed: new Date().toISOString(),
+          icon: "asdf,sdfe,asdfe",
+          tags: [{tag:'example'}, {tag:'test'}, {tag:'document'}],
+          size: 1024,
+          content: `This is an example document for testing purposes. Generated at ${new Date().toISOString()}`,
+          accessKeys: [
+            {
+              id: uuidv4(),
+              encryptedKey: 'EncryptedKey1',
+            },
+            {
+              id: uuidv4(),
+              encryptedKey: 'EncryptedKey2',
+            },
+          ],
+        },
+      };
+    };
+
+    // 验证数据
+    document.getElementById('validateData').addEventListener('click', async () => {
+      const sampleData = generateSampleData();
+      console.log('Validating data:', JSON.stringify(sampleData, null, 2));
+      const validationResult = validateFull(sampleData);
+      if (!validationResult.valid) {
+        console.error('Validation failed:', validationResult.errors);
+        console.log('Validation Error! Check the console for more information.');
+      } else {
+        console.log('Validation successful! Ready to add data.');
+      }
+    });
+
+    // 添加数据
+    document.getElementById('addData').addEventListener('click', async () => {
+      const sampleData = generateSampleData();
+      const validationResult = validateFull(sampleData);
+      if (validationResult.valid) {
+        try {
+          console.log('Attempting to add data:', sampleData);
+          await fullStore.insert(sampleData);
+          console.log('Data added successfully:', sampleData);
+
+          // 立即查询并打印所有文档
+          const allDocs = await fullStore.find().exec();
+          console.log('All documents after insertion:', allDocs);
+          displayResults(allDocs);
+        } catch (error) {
+          console.error('Error adding data:', error);
+          console.error('Error details:', error.parameters);
+        }
+      } else {
+    console.error('Validation failed:', validationResult.errors);
+  }
+    });
+
+    // 搜索数据
+    document.getElementById('searchData').addEventListener('click', async () => {
+      const query = document.getElementById("searchQuery").value;
+      if (!query) {
+        console.error('No search query provided.');
+        return;
+      }
+      const results = await fullStore.find({
+        selector: { 'doc.content': { $regex: query, $options: 'i' } }
+      }).limit(10).exec();
+      displayResults(results);
+    });
+
+    // 单个字段验证
+    document.getElementById('validateField').addEventListener('click', async () => {
+      const fieldName = document.getElementById('fieldName').value;
+      let fieldValue = document.getElementById('fieldValue').value;
+
+      // 尝试解析 JSON 输入
+      try {
+        fieldValue = JSON.parse(fieldValue);
+      } catch (e) {
+        // 如果不是有效的 JSON，保持原始字符串值
+      }
+
+      const validation = validateField(fieldName, fieldValue);
+      if (!validation.valid) {
+        console.log(`${fieldName} validation failed:`, `${validation.errors.map(err => err.message).join(", ")}`);
+      } else {
+        console.log('Field validation successful!');
+      }
+    });
+
+    // 订阅数据变更
+    fullStore.find().$.subscribe(results => {
+      displayResults(results);
+    });
+
+  </script>
+</body>
+</html>

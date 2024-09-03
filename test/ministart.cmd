@@ -1,0 +1,1 @@
+.\miniserve ./ --index index.html --port 8001

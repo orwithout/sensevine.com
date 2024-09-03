@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test doc_io_query</title>
+</head>
+<body>
+    <h1>Test doc_io_query (Check Console)</h1>
+    <button onclick="testGetDocById()">Get Doc by ID</button>
+    <button onclick="testQueryStartsWith()">Test queryStartsWith</button>
+    <button onclick="testFindByField()">Test findByField</button>
+    <button onclick="testFindInRange()">Test findInRange</button>
+
+    <script type="module">
+        import DocIoQuery from './doc_io_query.js';
+        const docIoQuery = new DocIoQuery();
+        // 初始化函数
+        async function initDocIoQuery() {
+            if (!docIoQuery.metaCollection) {
+                await docIoQuery.init();
+            }
+        }
+
+        window.testGetDocById = async function() {
+            await initDocIoQuery();
+            const results = await docIoQuery.findByField('id', '9ada5030-92fc-40bc-a47a-4475d269e895', 5);
+            console.log('findByField results:', results);
+        };
+
+        window.testQueryStartsWith = async function() {
+            await initDocIoQuery();
+            const results = await docIoQuery.queryStartsWith('doc.name', 'Test', 5);
+            console.log('queryStartsWith results:', results);
+        };
+
+        window.testFindByField = async function() {
+            await initDocIoQuery();
+            const results = await docIoQuery.findByField('doc.type', 'text/plain', 5);
+            console.log('findByField results:', results);
+        };
+
+        window.testFindInRange = async function() {
+            await initDocIoQuery();
+            const results = await docIoQuery.findInRange('doc.size', 0, 1000, 5);
+            console.log('findInRange results:', results);
+        };
+    </script>
+</body>
+</html>

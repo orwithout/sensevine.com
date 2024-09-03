@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Helia1</title>
+    <link rel="icon favicon" href="https://unpkg.com/@helia/css@1.0.1/logos/favicon.ico" />
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
+    <script type="module" crossorigin src="./index.js"></script>
+  </head>
+  <body>
+    <h1>IPFS in the Browser via Helia</h1>
+    <div>
+      <button class="e2e-startHelia" onclick="window.helia.start()">Start Helia</button>
+      <button class="e2e-stopHelia" onclick="window.helia.stop()">Stop Helia</button>
+    </div>
+    <h1 id="status">Node status: <span id="statusValue">Not Started</span></h1>
+
+    
+    <div id="nodeInfo">
+      <h3>ID: <span id="nodeId">unknown</span></h3>
+      <h3>Discovered Peers: <span id="discoveredPeerCount">0</span></h3>
+      <h3>Connected Peers: <span id="connectedPeerCount">0</span></h3>
+      <ul id="connectedPeersList"></ul>
+    </div>
+
+    <hr />
+
+  </body>
+
+
+
+  <script nomodule>
+    alert('Your browser does not support importing ESM modules')
+  </script>
+</html>

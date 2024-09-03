@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileIDB Module Test</title>
+</head>
+<body>
+    <h1>Test FileIDB Module</h1>
+    <lable>①</lable> <button id="addData">Add Sample Data</button><br><br>
+    <lable>②</lable> <input type="text" id="searchQuery" placeholder="搜索 ID,例如: 1"> <button id="searchData">Search Data</button>
+
+    <script type="module">
+        import fileidb from './file_store.js';
+
+        document.getElementById('addData').addEventListener('click', async () => {
+            const sampleData = {
+                id: `${Date.now()}`, // 使用时间戳作为唯一ID
+                type: "text/markdown",
+                cid: "sampleCID",
+                name: "Sample File",
+                content: "This is a test file content.",
+                tags: ["test", "file", "sample"]
+            };
+            await fileidb.add(sampleData);
+        });
+
+        document.getElementById('searchData').addEventListener('click', async () => {
+            const query = document.getElementById("searchQuery").value;
+            try {
+                const results = await fileidb.queryStartsWith('id',query,5);
+                console.log(results);
+                alert("Data found: " + JSON.stringify(results));
+            } catch (error) {
+                alert("Error searching data: " + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

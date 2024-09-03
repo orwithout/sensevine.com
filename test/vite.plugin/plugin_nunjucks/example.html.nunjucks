@@ -1,0 +1,15 @@
+<!-- vite\plugin_nunjucks\example.html.nunjucks -->
+<html>
+<head>
+  <title>{{ title }}</title>
+</head>
+<body>
+  <h1>{{ title }}</h1>
+  <p>{{ getMessage() }}</p>
+  <ul>
+  {% for item in items %}
+    <li>{{ item.name }} - {{ formatPrice(item.price, discount) }}</li>
+  {% endfor %}
+  </ul>
+</body>
+</html>

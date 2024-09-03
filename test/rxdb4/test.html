@@ -1,0 +1,28 @@
+<!-- index\test.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>PWA 应用数据验证</title>
+    <script type="module">
+        import { validateFull, validatePartial, validateField, docSchema } from './schema.js';
+
+        window.onload = function () {
+            const txtInput = document.getElementById('test-field');
+            const validateFieldButton = document.getElementById('validateFieldButton');
+
+            validateFieldButton.addEventListener('click', () => {
+                
+                const fieldResult = validateField('doc.icon', txtInput.value);
+                console.log(fieldResult);
+            });
+        };
+    </script>
+</head>
+<body>
+    
+    <label for="test-field">icon</label> <input type="text" id="test-field" placeholder="输入标签，例如：科技, 生活"> <button id="validateFieldButton">验证icon字段</button><br>
+
+    
+</body>
+</html>

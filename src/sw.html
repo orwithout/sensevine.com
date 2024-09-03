@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Worker Test</title>
+</head>
+<body>
+  <h1>Service Worker Test</h1>
+  <button id="registerSWBtn">Register Service Worker</button>
+  <button id="addDocBtn">Add Sample Document via SW</button>
+  <pre id="swResult"></pre>
+
+  <script type="module">
+    import { initDatabase } from './initDatabase.js';
+
+    async function cacheModulesToRxDB(db) {
+      const moduleUrls = ['./docs_easy_io.js', './base_docs.js']; // 添加所有可能被动态导入的模块
+      for (const url of moduleUrls) {
+        const response = await fetch(url);
+        const moduleContent = await response.text();
+        await db.modules.upsert({ url, content: moduleContent });
+        console.log(`Module ${url} cached in RxDB`);
+      }
+    }
+
+    document.getElementById('registerSWBtn').addEventListener('click', async () => {
+      if ('serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.register('./sw.js', { type: 'module' });
+          console.log('Service Worker registered with scope:', registration.scope);
+
+          const db = await initDatabase();
+          await cacheModulesToRxDB(db);
+        } catch (error) {
+          console.error('Service Worker registration failed:', error);
+        }
+      } else {
+        console.error('Service Workers are not supported in this browser.');
+      }
+    });
+
+    document.getElementById('addDocBtn').addEventListener('click', async () => {
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          action: 'addSampleDoc'
+        });
+      } else {
+        console.error('No active Service Worker to handle the message.');
+      }
+    });
+
+    navigator.serviceWorker.addEventListener('message', event => {
+      const resultElement = document.getElementById('swResult');
+      resultElement.textContent = JSON.stringify(event.data, null, 2);
+    });
+  </script>
+</body>
+</html>

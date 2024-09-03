@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <h1>RxDB Test Template</h1>
+  <label>①</label>
+  <button id="addData">Add Sample Data</button><br><br>
+  <label>②</label>
+  <input type="text" id="searchQuery" placeholder="Search text, example: Learn">
+  <button id="searchData">Search Data</button>
+  <button id="chained-search">Search Data</button>
+  <div id="results"></div>
+
+  <script type="module">
+    import getTodosCollection from './todos.js';
+
+    const todosCollection = await getTodosCollection();
+
+    document.getElementById('addData').addEventListener('click', async () => {
+      const sampleData = {
+        id: Date.now().toString(),
+        text: 'Learn RxDB',
+        completed: false
+      };
+      try {
+        await todosCollection.insert(sampleData);
+        console.log('Data added successfully:', sampleData);
+      } catch (error) {
+        console.error('Error adding data:', error);
+      }
+    });
+
+    document.getElementById('searchData').addEventListener('click', async () => {
+      const query = document.getElementById("searchQuery").value;
+      const results = await todosCollection.find({
+        selector: {
+          text: {$regex: query,$options: 'i'}
+        }}).exec();
+      console.log('Found:', results);
+      displayResults(results);
+    });
+
+
+    // document.getElementById('searchData').addEventListener('click', async () => {
+    //   const query = document.getElementById("searchQuery").value;
+    //   const results = await todosCollection.find().where('text').regex(query).exec();
+    //   console.log('Found:', results);
+    //   displayResults(results);
+    // });
+
+
+    function displayResults(results) {
+      const resultDiv = document.getElementById('results');
+      resultDiv.innerHTML = '';
+      results.forEach(result => {
+        const p = document.createElement('p');
+        p.textContent = `ID: ${result.id}, Text: ${result.text}, Completed: ${result.completed}`;
+        resultDiv.appendChild(p);
+      });
+    }
+
+    // 订阅数据变更
+    todosCollection.find().$.subscribe(todos => {
+      console.log('Todos changed:', todos);
+      displayResults(todos);
+    });
+  </script>
+</body>
+</html>

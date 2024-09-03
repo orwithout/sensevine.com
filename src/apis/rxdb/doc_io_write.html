@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试 DocIoWrite</title>
+</head>
+<body>
+    <h1>测试 DocIoWrite (请查看控制台)</h1>
+    <button onclick="testDocAdd()">测试 docAdd</button>
+    <button onclick="testDocAdd2()">测试 docAdd2</button>
+    <button onclick="testDocUpdate()">测试 docUpdate</button>
+
+    <script type="module">
+        import DocIoWrite from './doc_io_write.js';
+        import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
+
+        const docIoWrite = new DocIoWrite();
+        await docIoWrite.init();
+
+        window.testDocAdd = async function() {
+            try {
+                const newDoc = {
+                    id: "7acf770f-b881-4f9f-ba39-bb03bd2c7e64",
+                    parent: '#',
+                    doc: {
+                        id: "7acf770f-b881-4f9f-ba39-bb03bd2c7e65",
+                        cid: `cid_${uuidv4()}`,
+                        type: 'text/plain',
+                        name: 'Test Document',
+                        content: 'This is a test document.'
+                    }
+                };
+                const result = await docIoWrite.docAdd(newDoc);
+                console.log('文档已添加:', result);
+            } catch (error) {
+                console.error('docAdd 出错:', error);
+            }
+        };
+
+        window.testDocAdd2 = async function() {
+            try {
+                const newDoc = {
+                    id: uuidv4(),
+                    parent: '#',
+                    doc: {
+                        id: uuidv4(),
+                        cid: `cid_${uuidv4()}`,
+                        type: 'text/plain',
+                        name: 'Test Document',
+                        content: 'This is a test document.'
+                    }
+                };
+                const result = await docIoWrite.docAdd(newDoc);
+                console.log('文档已添加:', result);
+            } catch (error) {
+                console.error('docAdd 出错:', error);
+            }
+        };
+
+        window.testDocUpdate = async function() {
+            try {
+                // 假设我们知道一个已存在的文档ID
+                const existingDocId = '7acf770f-b881-4f9f-ba39-bb03bd2c7e64';
+                const updateData = {
+                    id: existingDocId,
+                    doc: {
+                        name: 'Updated Test Document',
+                        content: 'This document has been updated.'
+                    }
+                };
+                const result = await docIoWrite.docUpdate(updateData);
+                console.log('文档已更新:', result);
+            } catch (error) {
+                console.error('docUpdate 出错:', error);
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+为代码命名版本
+
+
+
+
+网址：		senseurl.net
+服务器导航
+gihub仓库导航
+推荐资源导航
+
+fork to github  例如 abcd.com
+
+
+统一后端：senseurl.net	按流量收费
+
+
+多后端	abcd.com		按流量收费
+
+
+前端添加多个后端，作为群组，相关信息加密存入github
+
+
+
+ipfs
+pc
+手机
+服务器
+
+
+pwa-local
+
+puchdb
+WebTorrent
+orbit-db
+ceramic 
+gun.js
+lowdb  https://github.com/typicode/lowdb
+yjs https://github.com/yjs/yjs
+https://github.com/pubkey/rxdb
+CRDT
+
+搜索：
+https://github.com/datafuselabs/databend
+FlexSearch
+https://github.com/postgresml/postgresml
+https://github.com/qdrant/qdrant
+https://github.com/meilisearch/meilisearch
+
+模板
+Handlebars.js
+
+html + js编程优化
+https://alpinejs.dev/
+htmx
+
+编辑器：
+lexical
+slate
+https://prosemirror.net/
+
+画图：
+https://github.com/excalidraw/excalidraw
+https://github.com/tldraw/tldraw
+https://github.com/topics/drawing
+
+代码在线演练：
+https://codepen.io/quill/pen/KzZqZx
+
+本地代码解析：
+https://github.com/KillianLucas/open-interpreter
+
+web3 网关：
+https://ipfs.github.io/public-gateway-checker/
+其中国内可访问：
+4everland.io
+cf-ipfs.com
+
+
+目录树：
+https://mar10.github.io/wunderbaum/#/tutorial/quick_start
+
+
+RUST 语言 字符串同步：                                                        
+iroh.computer
+iroh.network
+
+
+https://github.com/ipfs/helia/tree/main/packages/ipns
+<script src="https://unpkg.com/@helia/ipns/dist/index.min.js"></script>
+
+
+
+
+https://app.pinata.cloud/billing
+
+https://github.com/peers/peerjs
+
+https://github.com/socketio/socket.io-client
+
+devTool:
+https://github.com/chromedp/chromedp
+
+https://github.com/ultrafunkamsterdam/undetected-chromedriver

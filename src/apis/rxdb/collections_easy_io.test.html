@@ -1,0 +1,210 @@
+<!-- src\apis\rxdb\collections_easy_io.test.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RxDB Base Docs Easy IO Test</title>
+</head>
+<body>
+  <h1>RxDB Base Docs Easy IO Test</h1>
+  <label>①Validate Doc</label> <button id="validateDocBtn">Validate Document</button><br><br>
+  <label>②Validate Field</label> <input type="text" id="validateFieldNameInput" placeholder="Field Name"> <input type="text" id="validateFieldValueInput" placeholder="Field Value"> <button id="validateFieldBtn">Validate Field</button> <p id="validateFieldResult"></p>
+  <label>③Add Doc</label> <button id="addDocBtn">Add Document</button><br><br>
+  <label>④Find by ID</label> <input type="text" id="findByIdInput" placeholder="Enter document ID"> <button id="findByIdBtn">Find</button> <p id="findByIdResult"></p>
+  <label>⑤Find by Name</label> <input type="text" id="findByFieldInput" placeholder="Enter document Name"> <button id="findByFieldBtn">Find</button><pre id="findByFieldResult"></pre>
+  <label>⑥Query Starts With Name</label> <input type="text" id="queryStartsWithName" placeholder="Enter start of Name"> <button id="queryStartsWithNameBtn">Query</button> <pre id="queryStartsWithNameRslt"></pre>
+  <label>⑦Query Starts With Tags</label> <input type="text" id="queryStartsWithTags" placeholder="Enter start of Tags"> <button id="queryStartsWithTagsBtn">Query</button> <pre id="queryStartsWithTagsRslt"></pre>
+  <label>⑧Query Starts With Tag Name</label> <input type="text" id="queryStartsWithTagName" placeholder="Enter start of Tag Name"> <button id="queryStartsWithTagNameBtn">Query</button> <pre id="queryStartsWithTagNameRslt"></pre> 
+  <label>⑨Subscribe to Changes</label><button id="subscribeBtn">Subscribe</button><button id="unsubscribeBtn" disabled>Unsubscribe</button><pre id="subscriptionResults"></pre>
+  
+  
+  <script type="module">
+    import { getDocsEasyIo } from './collections_easy_io.js';
+    import _ from 'lodash';
+
+    const docsEasyIo = await getDocsEasyIo('doc_meta');
+
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c == 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    }
+    function genRanStr(length) {
+      const base64Chars = '#ab/';
+      let randomString = '';
+      for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * base64Chars.length);
+          randomString += base64Chars[randomIndex];
+      }
+      return randomString;
+  }
+    function generateSampleDoc() {
+      return {
+        id: uuidv4(),
+        parent: `${genRanStr(3)}`,
+        doc: {
+          id: uuidv4(),
+          type: 'text/plain',
+          cid: 'bafybeigdyrzt5sfp7udm7hu76uh7y26nf4dfuylqabf3oclgtqy55fbzdi',
+          name: `Example Document ${new Date().toISOString()}`,
+          actor: 'did:example:123456789abcdefghi',
+          icon: 'asdf,sdfe,asdfe,',
+          profile: 'https://example.com/profile',
+          published: new Date().toISOString(),
+          updated: new Date().toISOString(),
+          accessed: new Date().toISOString(),
+          tags: [
+            {tag:'example', id: uuidv4(), name: 'Example Tag'},
+            {tag:'test', id: uuidv4(), name: 'Test Tag'},
+            {tag:'document', id: uuidv4(), name: 'Document Tag'}
+          ],
+          size: 1024,
+          content: `This is an example document for testing purposes. Generated at ${new Date().toISOString()}`,
+          accessKeys: [
+            {
+              id: uuidv4(),
+              encryptedKey: 'EncryptedKey1',
+            },
+            {
+              id: uuidv4(),
+              encryptedKey: 'EncryptedKey2',
+            },
+          ],
+        },
+      };
+    }
+
+    // Validate entire document
+    document.getElementById('validateDocBtn').addEventListener('click', async () => {
+      const sampleDoc = generateSampleDoc();
+      const validationResult = await docsEasyIo.validateFullMeta(sampleDoc);
+      console.log(`Document validation: ${validationResult.valid ? 'Success' : 'Failed'} - ${JSON.stringify(validationResult.errors)}`);
+    });
+
+    // Validate single field
+    document.getElementById('validateFieldBtn').addEventListener('click', async () => {
+      const fieldName = document.getElementById('validateFieldNameInput').value;
+      const fieldValue = document.getElementById('validateFieldValueInput').value;
+      const validation = await docsEasyIo.validateField(fieldName, fieldValue);
+      document.getElementById('validateFieldResult').textContent = `Field validation: ${validation.valid ? 'Success' : 'Failed'} - ${JSON.stringify(validation.errors)}`;
+    });
+
+    // Add sample document
+    document.getElementById('addDocBtn').addEventListener('click', async () => {
+      const sampleDoc = generateSampleDoc();
+      try {
+        await docsEasyIo.add(sampleDoc);
+        console.log('Sample document added:', sampleDoc);
+      } catch (error) {
+        console.error('Error adding document:', error);
+      }
+    });
+
+    // Find by ID
+    document.getElementById('findByIdBtn').addEventListener('click', async () => {
+      const id = document.getElementById('findByIdInput').value;
+      try {
+        const doc = await docsEasyIo.findById(id);
+        document.getElementById('findByIdResult').textContent = JSON.stringify(doc, null, 2);
+      } catch (error) {
+        console.error('Error finding document:', error);
+        document.getElementById('findByIdResult').textContent = 'Error: ' + error.message;
+      }
+    });
+
+    // Find by field
+    document.getElementById('findByFieldBtn').addEventListener('click', async () => {
+      const fieldValue = document.getElementById('findByFieldInput').value;
+      try {
+        const docs = await docsEasyIo.findByField('doc.name', fieldValue);
+        document.getElementById('findByFieldResult').textContent = JSON.stringify(docs, null, 2);
+      } catch (error) {
+        console.error('Error finding documents:', error);
+        document.getElementById('findByFieldResult').textContent = 'Error: ' + error.message;
+      }
+    });
+
+    // Query starts with name
+    document.getElementById('queryStartsWithNameBtn').addEventListener('click', async () => {
+      const startsWith = document.getElementById('queryStartsWithName').value;
+      try {
+        const docs = await docsEasyIo.queryStartsWith('doc.name', startsWith);
+        document.getElementById('queryStartsWithNameRslt').innerText = JSON.stringify(docs, null, 2);
+      } catch (error) {
+        console.error('Error querying documents:', error);
+        document.getElementById('queryStartsWithNameRslt').innerText = 'Error: ' + error.message;
+      }
+    });
+
+    // Query starts with Tags
+    document.getElementById('queryStartsWithTagsBtn').addEventListener('click', async () => {
+      const startsWith = document.getElementById('queryStartsWithTags').value;
+      try {
+        const docs = await docsEasyIo.queryStartsWith('doc.tags.tag', startsWith);
+        document.getElementById('queryStartsWithTagsRslt').innerText = JSON.stringify(docs, null, 2);
+      } catch (error) {
+        console.error('Error querying documents:', error);
+        document.getElementById('queryStartsWithTagsRslt').innerText = 'Error: ' + error.message;
+      }
+    });
+
+    // Query starts with Tag Name
+    document.getElementById('queryStartsWithTagNameBtn').addEventListener('click', async () => {
+      const startsWith = document.getElementById('queryStartsWithTagName').value;
+      try {
+        const docs = await docsEasyIo.queryStartsWith('doc.tags.name', startsWith);
+        document.getElementById('queryStartsWithTagNameRslt').innerText = JSON.stringify(docs, null, 2);
+      } catch (error) {
+        console.error('Error querying documents:', error);
+        document.getElementById('queryStartsWithTagNameRslt').innerText = 'Error: ' + error.message;
+      }
+    });
+
+
+
+
+    // 测试订阅 test subscription
+    let subscriptionKey = null;
+    function updateSubscriptionResults(results) {
+      const resultElement = document.getElementById('subscriptionResults');
+      const formattedResults = results.map(doc => 
+        `${doc.localId}: ${_.get(doc, 'doc.name', 'N/A')}`
+      ).join('\n');
+      
+      resultElement.textContent = formattedResults || 'No documents';
+    }
+
+    // Subscribe to changes
+    document.getElementById('subscribeBtn').addEventListener('click', () => {
+      subscriptionKey = docsEasyIo.subscribeToChanges({}, (results) => {
+        updateSubscriptionResults(results);
+        console.log('Subscription update:', results.length, 'documents');
+      });
+      document.getElementById('subscribeBtn').disabled = true;
+      document.getElementById('unsubscribeBtn').disabled = false;  // 修改：启用 Unsubscribe 按钮
+      console.log('Subscribed to changes');
+    });
+
+    // Unsubscribe from changes
+    document.getElementById('unsubscribeBtn').addEventListener('click', () => {
+      if (subscriptionKey) {
+        docsEasyIo.unsubscribe(subscriptionKey);
+        subscriptionKey = null;
+        document.getElementById('subscribeBtn').disabled = false;
+        document.getElementById('unsubscribeBtn').disabled = true;
+        document.getElementById('subscriptionResults').textContent = 'Unsubscribed';
+        console.log('Unsubscribed from changes');
+      }
+    });
+
+    // 在页面关闭时取消所有订阅
+    window.addEventListener('beforeunload', () => {
+      docsEasyIo.unsubscribeAll();
+    });
+
+  </script>
+</body>
+</html>

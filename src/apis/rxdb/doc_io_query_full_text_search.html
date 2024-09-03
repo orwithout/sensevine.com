@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test doc_io_query</title>
+</head>
+<body>
+    <h1>Test doc_io_query (Check Console)</h1>
+    <button onclick="testGetDocById()">Get Doc by ID</button>
+    <button onclick="testQueryStartsWith()">Test queryStartsWith</button>
+    <button onclick="testFindByField()">Test findByField</button>
+    <button onclick="testFindInRange()">Test findInRange</button>
+    <button onclick="testFullTextSearch()">Test fullTextSearch</button>
+
+    <script type="module">
+        import { docQueryStartsWith, docFindByField, docFindInRange, docFullTextSearch } from './doc_io_query.js';
+        
+        window.testGetDocById = async function() {
+            try {
+                const results = await docFindByField('id', '9ada5030-92fc-40bc-a47a-4475d269e895', 5);
+                console.log('findByField results:', results);
+            } catch (error) {
+                console.error('Error in findByField:', error);
+            }
+        };
+        window.testQueryStartsWith = async function() {
+            try {
+                const results = await docQueryStartsWith('doc.name', 'Test', 5);
+                console.log('queryStartsWith results:', results);
+            } catch (error) {
+                console.error('Error in queryStartsWith:', error);
+            }
+        };
+
+        window.testFindByField = async function() {
+            try {
+                const results = await docFindByField('doc.type', 'text/plain', 5);
+                console.log('findByField results:', results);
+            } catch (error) {
+                console.error('Error in findByField:', error);
+            }
+        };
+
+        window.testFindInRange = async function() {
+            try {
+                const results = await docFindInRange('doc.size', 0, 1000, 5);
+                console.log('findInRange results:', results);
+            } catch (error) {
+                console.error('Error in findInRange:', error);
+            }
+        };
+
+        window.testFullTextSearch = async function() {
+            try {
+                const searchText = "IlRoaXMgaXMgYSB0ZXN0IGRvY3VtZW50LiI=";
+                console.log(`Performing full text search for: "${searchText}"`);
+                const results = await docFullTextSearch('doc.content', searchText, 5);
+                console.log('fullTextSearch results:', results);
+                
+                if (results.length === 0) {
+                    console.log('No results found. Please check the console for more details.');
+                }
+            } catch (error) {
+                console.error('Error in fullTextSearch:', error);
+            }
+        };
+    </script>
+</body>
+</html>

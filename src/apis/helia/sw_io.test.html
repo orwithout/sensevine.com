@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helia UnixFS Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            margin-top: 10px;
+        }
+        #status, #fileInfo, #downloadLink {
+            margin-top: 10px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <h1>Helia UnixFS Test Page</h1>
+
+    <div class="section">
+        <h2>Node Control</h2>
+        <button onclick="startNode()">Start Node</button>
+        <button onclick="stopNode()">Stop Node</button>
+        <button onclick="getStatus()">Get Status</button>
+        <pre id="status"></pre>
+    </div>
+
+    <div class="section">
+        <h2>File Upload</h2>
+        <input type="file" id="fileInput">
+        <button onclick="uploadFile()">Upload File</button>
+        <pre id="uploadResult"></pre>
+    </div>
+
+    <div class="section">
+        <h2>File Info</h2>
+        <input type="text" id="cidInput" placeholder="Enter CID">
+        <button onclick="getFileInfo()">Get File Info</button>
+        <pre id="fileInfo"></pre>
+    </div>
+
+    <div class="section">
+        <h2>File Download</h2>
+        <input type="text" id="downloadCidInput" placeholder="Enter CID">
+        <button onclick="downloadFile()">Download File</button>
+        <div id="downloadLink"></div>
+    </div>
+
+    <script>
+        async function startNode() {
+            const response = await fetch('/src/helia/api/v0/start');
+            const result = await response.json();
+            document.getElementById('status').textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function stopNode() {
+            const response = await fetch('/src/helia/api/v0/stop');
+            const result = await response.json();
+            document.getElementById('status').textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function getStatus() {
+            const response = await fetch('/src/helia/api/v0/status');
+            const result = await response.json();
+            document.getElementById('status').textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file first');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/src/helia/api/v0/add-file', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('uploadResult').textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function getFileInfo() {
+            const cid = document.getElementById('cidInput').value;
+            if (!cid) {
+                alert('Please enter a CID');
+                return;
+            }
+
+            const response = await fetch(`/src/helia/api/v0/file-info?cid=${cid}`);
+            const result = await response.json();
+            document.getElementById('fileInfo').textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function downloadFile() {
+            const cid = document.getElementById('downloadCidInput').value;
+            if (!cid) {
+                alert('Please enter a CID');
+                return;
+            }
+
+            const response = await fetch(`/src/helia/api/v0/get-file?cid=${cid}`);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `file-${cid}`;
+            a.textContent = 'Click here to download the file';
+            document.getElementById('downloadLink').innerHTML = '';
+            document.getElementById('downloadLink').appendChild(a);
+        }
+    </script>
+</body>
+</html>

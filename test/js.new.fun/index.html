@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Function with Various Parameters</title>
+</head>
+<body>
+  <h1>Dynamic Function with Various Parameters</h1>
+  <button id="createFunction">Create and Call Function</button>
+  <script>
+    document.getElementById('createFunction').addEventListener('click', () => {
+      const params = ['a', 'b', 'c', 'd'];
+      const functionBody = `
+        console.log('Number:', a);
+        console.log('String:', b);
+        console.log('Object:', c);
+        console.log('Array:', d);
+        return a + b.length + c.value + d.length;
+      `;
+
+      // 创建带参数的动态函数
+      const dynamicFunction = new Function(...params, functionBody);
+
+      // 定义不同类型的参数
+      const number = 5;
+      const string = "Hello";
+      const object = { value: 10 };
+      const array = [1, 2, 3];
+
+      // 调用动态函数并输出结果
+      const result = dynamicFunction(number, string, object, array);
+      console.log('Result:', result); // 输出：23
+    });
+  </script>
+</body>
+</html>

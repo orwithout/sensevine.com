@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL State Management with Persistent Inputs</title>
+</head>
+<body>
+    <input type="text" id="sharedInput" placeholder="Shared input (persists across states)">
+    <div id="stateSpecificContent"></div>
+    <button id="toggleState">Go to /other-state</button>
+
+    <script>
+        // 初始状态设置
+        let currentState = 'home';
+
+        document.getElementById('toggleState').addEventListener('click', function() {
+            if (currentState === 'home') {
+                currentState = 'other';
+                history.pushState({ page: 'other' }, 'Other', '/other-state');
+                updateContentForState('other');
+                this.textContent = 'Go to /home-state';
+            } else {
+                currentState = 'home';
+                history.pushState({ page: 'home' }, 'Home', '/home-state');
+                updateContentForState('home');
+                this.textContent = 'Go to /other-state';
+            }
+        });
+
+        // 根据当前状态更新内容
+        function updateContentForState(state) {
+            const container = document.getElementById('stateSpecificContent');
+            if (state === 'other') {
+                container.innerHTML = `<input type="text" id="otherInput" placeholder="Input for Other State" 
+                                        value="${sessionStorage.getItem('otherInput') || ''}">`;
+                // 监听输入更改并保存到 sessionStorage
+                document.getElementById('otherInput').addEventListener('input', function() {
+                    sessionStorage.setItem('otherInput', this.value);
+                });
+            } else {
+                container.innerHTML = '';
+            }
+        }
+
+        // 处理浏览器前进后退事件
+        window.addEventListener('popstate', function(event) {
+            currentState = event.state ? event.state.page : 'home';
+            updateContentForState(currentState);
+            document.getElementById('toggleState').textContent = currentState === 'home' ? 'Go to /other-state' : 'Go to /home-state';
+        });
+
+        // 页面加载时初始化内容
+        updateContentForState(currentState);
+    </script>
+</body>
+</html>

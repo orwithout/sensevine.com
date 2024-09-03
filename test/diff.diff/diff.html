@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diff Demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/diff/5.0.0/diff.min.js"></script>
+</head>
+<body>
+  <h1>Diff Demo</h1>
+  <div id="output"></div>
+  <script>
+    const oldText = 'Hello world\nThis is a test.';
+    const newText = 'Hello new world\nThis is a test.';
+
+    const differences = Diff.diffLines(oldText, newText);
+
+    differences.forEach(part => {
+      const color = part.added ? 'green' :
+        part.removed ? 'red' : 'black';
+      const span = document.createElement('span');
+      span.style.color = color;
+      span.textContent = part.value;
+      document.getElementById('output').appendChild(span);
+    });
+  </script>
+</body>
+</html>

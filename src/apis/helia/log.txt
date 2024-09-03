@@ -1,0 +1,7 @@
+
+
+https://github.com/ipfs/helia-remote-pinning
+https://ipfs.github.io/pinning-services-api-spec/
+https://auth.pinata.cloud/realms/pinata/protocol/openid-connect/auth?client_id=pinata-app&redirect_uri=https%3A%2F%2Fapp.pinata.cloud%2Fgateway&state=bce2ea79-06b9-40e8-8466-37ba2dc6b02b&response_mode=fragment&response_type=code&scope=openid%20email%20profile&nonce=cd0b8956-69d2-4a97-b26c-eee1d731ce0e&code_challenge=mXnkIQQOHGgakYIVbgO1s20SwIvrLd_iQZGg5swEGIg&code_challenge_method=S256
+https://docs.pinata.cloud/introduction
+https://github.com/ipfs-examples/helia-examples/tree/main/examples/helia-jest

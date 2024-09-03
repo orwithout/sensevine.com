@@ -1,0 +1,36 @@
+<!-- src\test\odb.ipfs\documents_odb.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>ODB Test Template</h1>
+    <lable>①</lable> <button id="addData">Add Sample Data</button><br><br>
+    <lable>②</lable> <input type="text" id="searchQuery" placeholder="Search ID, example: 1"> <button id="searchData">Search Data</button>
+
+    <script type="module">
+        import documentStore from './documents_odb.js';
+
+        document.getElementById('addData').addEventListener('click', async () => {
+            const sampleData = {
+                id: "123",
+                content: "This is a test file content."
+            };
+            try {
+                await documentStore.add(sampleData);
+                console.log('Data added successfully:', sampleData);
+            } catch (error) {
+                console.error('Error adding data:', error);
+            }
+        });
+
+        document.getElementById('searchData').addEventListener('click', async () => {
+            const query = document.getElementById("searchQuery").value;
+            const results = await documentStore.searchId(query);
+            console.log('found: ',results);
+        });
+    </script>
+</body>
+</html>

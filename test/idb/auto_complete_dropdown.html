@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown Integration Example</title>
+    <script type="module" src="auto_complete_dropdown.js"></script>
+
+</head>
+<body>
+    <a href="./file_store.html">（点我）先添加数据，再测试下拉菜单</a><br>
+   
+<div>
+    <input type="text" id="main-input" class="main-input" placeholder="Type something..." />
+    <auto-complete-dropdown  field-name="id" idb-store="file" id="dropdown"></auto-complete-dropdown>
+</div>
+
+<script>
+    const mainInput = document.getElementById('main-input');
+    const dropdown = document.getElementById('dropdown');
+
+    customElements.whenDefined('auto-complete-dropdown').then(() => {
+        // 一旦auto-complete-dropdown定义完成，设置它的parentInput属性为主输入框
+        dropdown.parentInput = mainInput; // 这里假设dropdown组件已经能够接收并使用这个属性
+    });
+</script>
+
+</body>
+</html>

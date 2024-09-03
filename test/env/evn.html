@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vite Env Test</title>
+</head>
+<body>
+  <h1>Vite Env Test</h1>
+  
+  <p>VITE_TEST_VAR: <span id="test-var"></span></p>
+  <p>VITE_TEST_VAR2: <span id="local-var"></span></p>
+
+  <script type="module">
+    document.getElementById('test-var').textContent = import.meta.env.VITE_TEST_VAR;
+    document.getElementById('local-var').textContent = import.meta.env.VITE_TEST_VAR2;
+  </script>
+</body>
+</html>

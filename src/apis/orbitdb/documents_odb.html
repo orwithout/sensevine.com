@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileIDB Module Test</title>
+</head>
+
+<body>
+    <h1>Test OrbitDB Module</h1>
+    <lable>①</lable> <button id="addData">Add Sample Data</button><br><br>
+    <lable>②</lable> <input type="text" id="searchQuery" placeholder="Search ID, Example: 123"> <button id="searchData">Search Data</button>
+
+    <script type="module">
+        import documentStore from './documents_odb.js';
+
+        document.getElementById('addData').addEventListener('click', async () => {
+            await documentStore.add({
+                // id: `${Date.now()}`, // 使用时间戳作为唯一ID
+                id: "123",
+                type: "text/markdown",
+                cid: "sampleCID",
+                name: "Sample File",
+                content: "This is a test file content.",
+                tags: ["test", "file", "sample"]
+            });
+        });
+
+
+        document.getElementById('searchData').addEventListener('click', async () => {
+            const query = document.getElementById("searchQuery").value;
+            const results = await documentStore.queryStartsWith('id',query,5);
+            console.log('found: ',results);
+        });
+
+    </script>
+</body>
+</html>
