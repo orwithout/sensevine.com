@@ -1,6 +1,6 @@
-# senseurl
+# sensevine.com
 
-`senseurl`是一个使用原生JavaScript开发的前端项目，利用Vite作为构建工具，旨在提供快速开发和构建的体验。
+`sensevine.com`是一个使用原生JavaScript开发的前端项目，利用Vite作为构建工具，旨在提供快速开发和构建的体验。
 
 ## 开始之前
 
@@ -37,16 +37,16 @@ git --version
 1. 打开命令行或终端。
 2. 运行以下命令来克隆本项目：
 ```bash
-git clone https://github.com/orwithout/senseurl.git
-# 使用Vite初始化名为`senseurl`的vanilla项目方法（仅供参考）：
-# npm create vite@latest senseurl -- --template vanilla
+git clone https://github.com/orwithout/sensevine.com.git
+# 使用Vite初始化名为`sensevine.com`的vanilla项目方法（仅供参考）：
+# npm create vite@latest sensevine.com -- --template vanilla
 ```
 
 
 3. 进入项目目录：
 
 ```bash
-cd senseurl
+cd sensevine.com
 ```
 
 4. 安装项目依赖：

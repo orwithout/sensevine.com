@@ -57,6 +57,11 @@ htmx
 lexical
 slate
 https://prosemirror.net/
+https://prosemirror.net/examples/codemirror/
+
+代码对比：
+https://codesandbox.io/p/sandbox/prosemirror-diff-nuhiiq
+
 
 画图：
 https://github.com/excalidraw/excalidraw

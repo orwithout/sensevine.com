@@ -25,26 +25,8 @@ class HeliaControl extends LitElement {
   //   }
   // `;
 
-  render() {
-    return html`
-      <button @click="${this.registerServiceWorker}">注册服务工作线程</button>
-      <button @click="${this.startHeliaNode}">启动 Helia 节点</button>
-      <button @click="${this.stopHeliaNode}">停止 Helia 节点</button>
-      <button @click="${this.unregisterServiceWorker}">注销服务工作线程</button>
-      <button @click="${this.checkStatus}">检查节点状态</button>
-      <br>
-      <input type="file" @change="${this.handleFileSelect}">
-      <button @click="${this.addFile}">添加文件</button>
-      <br>
-      <input type="text" placeholder="输入 CID" id="cidInput">
-      <button @click="${this.getFile}">获取文件</button>
-      <button @click="${this.getFileInfo}">获取文件信息</button>
-      <button @click="${this.listFiles}">列出文件</button>
-      <div id="fileInfo" class="file-info"></div>
-      <div id="fileList" class="file-list"></div>
-    `;
-  }
 
+  // 因为service worker 管辖范围与文件位置相关，所以注册服务工作线程的代码放在这里，而不是apis/helia/ 中
   registerServiceWorker() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./index_sw_helia_io.js', { type: 'module' })
@@ -213,6 +195,26 @@ class HeliaControl extends LitElement {
         const fileListDiv = this.shadowRoot.querySelector('#fileList');
         fileListDiv.innerHTML = `<p>错误: ${err.message}</p>`;
       });
+  }
+  
+  render() {
+    return html`
+      <button @click="${this.registerServiceWorker}">注册服务工作线程</button>
+      <button @click="${this.startHeliaNode}">启动 Helia 节点</button>
+      <button @click="${this.stopHeliaNode}">停止 Helia 节点</button>
+      <button @click="${this.unregisterServiceWorker}">注销服务工作线程</button>
+      <button @click="${this.checkStatus}">检查节点状态</button>
+      <br>
+      <input type="file" @change="${this.handleFileSelect}">
+      <button @click="${this.addFile}">添加文件</button>
+      <br>
+      <input type="text" placeholder="输入 CID" id="cidInput">
+      <button @click="${this.getFile}">获取文件</button>
+      <button @click="${this.getFileInfo}">获取文件信息</button>
+      <button @click="${this.listFiles}">列出文件</button>
+      <div id="fileInfo" class="file-info"></div>
+      <div id="fileList" class="file-list"></div>
+    `;
   }
 
   // ... 其他方法保持不变 ...
